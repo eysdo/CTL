@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "stdint.h": "c",
+        "cstdint": "c",
+        "type_traits": "cpp",
+        "typeinfo": "cpp"
+    }
+}
