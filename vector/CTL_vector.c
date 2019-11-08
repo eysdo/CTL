@@ -1,17 +1,9 @@
-#pragma once
-
 #include <stdint.h>
 #include <malloc.h>
 #include <string.h>
 
+#include "CTL_vector.h"
 #include "CTL_vector_iterator.h"
-
-typedef struct
-{   
-    void **base;
-    uint64_t size;
-    uint64_t capacity;
-} CTL_vector;
 
 int CTL_vector_new(CTL_vector *handle, uint64_t size)
 {
@@ -48,7 +40,7 @@ int CTL_vector_pop(CTL_vector *handle)
     --handle->size;
 }
 
-int CTL_vector_insert(CTL_vector *handle, void* data, uint64_t pos)
+int CTL_vector_insert(CTL_vector *handle, CTL_vector_iterator iterator, void *data)
 {
     ++handle->size;
     if (handle->size > handle->capacity)
@@ -61,33 +53,37 @@ int CTL_vector_insert(CTL_vector *handle, void* data, uint64_t pos)
         handle->base = ptr;
     }
 
-    for (uint64_t i = handle->size - 1; i > pos; --i)
+    for (uint64_t i = handle->size - 1; i > iterator.pos; --i)
     {
         handle->base[i] = handle->base[i - 1];
     }
-    handle->base[pos - 1] = data;
+    handle->base[iterator.pos - 1] = data;
 
     return 0;
 }
 
-void CTL_vector_erase(CTL_vector *handle, uint64_t pos)
+int CTL_vector_erase(CTL_vector *handle, CTL_vector_iterator iterator)
 {
-    for (uint64_t i = pos - 1; i < handle->size; ++i)
+    for (uint64_t i = iterator.pos - 1; i < handle->size; ++i)
     {
         handle->base[i] = handle->base[i + 1];
     }
     --handle->size;
+    return 0;
 }
 
-void CTL_vector_delete(CTL_vector *handle)
+int CTL_vector_delete(CTL_vector *handle)
 {
     free(handle->base);
+    return 0;
 }
 
-CTL_vector_iterator CTL_vector_take_iterator(CTL_vector *handle, uint64_t pos)
+int CTL_vector_take_iterator(CTL_vector *handle, CTL_vector_iterator *iterator, uint64_t pos)
 {
-    CTL_vector_iterator ret;
-    ret.data = handle->base + pos;
-    ret.pos = pos;
-    return ret;
+    if(pos > handle->size)
+        return -1;
+    
+    iterator->data = handle->base + pos - 1;
+    iterator->pos = pos;
+    return 0;
 }
