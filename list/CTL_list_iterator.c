@@ -13,7 +13,7 @@ int CTL_list_iterator_add(CTL_list_iterator *handle, uint64_t pos)
         ;
 
     CTL_list_iterator ret;
-    handle->pos = pos;
+    handle->pos += pos;
     handle->node = node;
     return 0;
 }
@@ -25,7 +25,7 @@ int CTL_list_iterator_sub(CTL_list_iterator *handle, uint64_t pos)
         ;
 
     CTL_list_iterator ret;
-    handle->pos = pos;
+    handle->pos -= pos;
     handle->node = node;
     return 0;
 }

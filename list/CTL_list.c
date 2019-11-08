@@ -74,9 +74,11 @@ int CTL_list_erase(CTL_list *handle, CTL_list_iterator iterator)
 
 int CTL_list_delete(CTL_list *handle)
 {
-	for (__CTL_DuLNode *node = handle->list.head.prior; node; node = node->next)
+	for (__CTL_DuLNode *node = handle->list.head.prior; node; )
 	{
+		__CTL_DuLNode *old_node = node->next;
 		free(node);
+		node = old_node;
 	}
 
 	return 0;
