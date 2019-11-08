@@ -47,9 +47,9 @@ int CTL_queue_delete(CTL_queue *handle)
 {
     for (__CTL_QueueNode *node = handle->queue.head; node; )
 	{
-		__CTL_QueueNode *old_node = node->next;
+		__CTL_QueueNode *next_node = node->next;
 		free(node);
-		node = old_node;
+		node = next_node;
 	}
     
     return 0;

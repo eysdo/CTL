@@ -76,9 +76,9 @@ int CTL_list_delete(CTL_list *handle)
 {
 	for (__CTL_DuLNode *node = handle->list.head.prior; node; )
 	{
-		__CTL_DuLNode *old_node = node->next;
+		__CTL_DuLNode *next_node = node->next;
 		free(node);
-		node = old_node;
+		node = next_node;
 	}
 
 	return 0;

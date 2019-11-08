@@ -15,7 +15,6 @@ typedef struct
     {
         __CTL_QueueNode *head;
         __CTL_QueueNode *tail;
-        /* data */
     } queue;
 
     uint64_t size;
