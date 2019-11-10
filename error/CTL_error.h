@@ -1,0 +1,3 @@
+#define CTL_MALLOC_FAILED -1
+#define CTL_OUT_OF_RANGE -2
+#define CTL_ITERATOR_INVALID -3

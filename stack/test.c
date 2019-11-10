@@ -1,15 +1,19 @@
 #include "CTL_stack.h"
+#include "../vector/CTL_vector.h"
 
-#include "CTL_stack.c"
+CTL_VECTOR(int);
+CTL_STACK(CTL_vector, int);
 
 int main(void)
 {
-    CTL_stack data;
-    CTL_stack_new(&data);
-    CTL_stack_push(&data, 0x1);
-    void* t;
-    CTL_stack_pop(&data, &t);
-    CTL_stack_push(&data, 0x8);
-    CTL_stack_push(&data, 0x9);
+    CTL_vector_int container;
+    CTL_vector_new_int(&container, 10);
+    CTL_vector_stack_int data;
+    CTL_vector_stack_new_int(&data, &container);
+    CTL_vector_stack_push_int(&data, 0x1);
+    int t;
+    CTL_vector_stack_pop_int(&data, &t);
+    CTL_vector_stack_push_int(&data, 0x8);
+    CTL_vector_stack_push_int(&data, 0x9);
     return 0;
 }
