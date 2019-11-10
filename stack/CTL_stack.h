@@ -16,6 +16,7 @@
     static inline void type_container##_stack_delete_##type(type_container##_##stack_##type *handle);                                    \
     static inline void type_container##_stack_top_##type(type_container##_##stack_##type *handle, type *data);                           \
                                                                                                                                          \
+    /*实现*/                                                                                                                           \
     static inline void type_container##_##stack_new_##type(type_container##_##stack_##type *handle, type_container##_##type *container)  \
     {                                                                                                                                    \
         handle->container = container;                                                                                                   \
@@ -30,14 +31,14 @@
     static inline void type_container##_stack_pop_##type(type_container##_##stack_##type *handle, type *data)                            \
     {                                                                                                                                    \
         type_container##_stack_top_##type(handle, data);                                                                                 \
-         type_container##_pop_back_##type(handle->container);                                                                           \
-         return;                                                                                                                        \
+        type_container##_pop_back_##type(handle->container);                                                                             \
+        return;                                                                                                                          \
     }                                                                                                                                    \
                                                                                                                                          \
     static inline void type_container##_stack_delete_##type(type_container##_##stack_##type *handle)                                     \
     {                                                                                                                                    \
         type_container##_delete_##type(handle->container);                                                                               \
-         return;                                                                                                                        \
+        return;                                                                                                                          \
     }                                                                                                                                    \
                                                                                                                                          \
     static inline void type_container##_stack_top_##type(type_container##_##stack_##type *handle, type *data)                            \
