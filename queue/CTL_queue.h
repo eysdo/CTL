@@ -1,8 +1,5 @@
 #pragma once
 
-#include <malloc.h>
-#include <stdint.h>
-
 #define CTL_QUEUE(type_container, type)                                                                                                  \
     /*声明*/                                                                                                                           \
     typedef struct                                                                                                                       \

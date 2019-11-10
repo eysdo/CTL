@@ -170,10 +170,20 @@
 		if (pos > handle->size - 1 || pos < 0)                                                                       \
 			return CTL_OUT_OF_RANGE;                                                                                 \
                                                                                                                      \
-		__CTL_DuLNode_##type *node = &handle->list.head;                                                             \
+		__CTL_DuLNode_##type *node;                                                                                  \
+		if (pos + 1 < handle->size / 2)                                                                              \
+		{                                                                                                            \
+			node = &handle->list.head;                                                                               \
                                                                                                                      \
-		for (uint64_t i = 0; node && i <= pos; ++i, node = node->next)                                               \
-			;                                                                                                        \
+			for (uint64_t i = 0; node && i <= pos; ++i, node = node->next)                                           \
+				;                                                                                                    \
+		}                                                                                                            \
+		else                                                                                                         \
+		{                                                                                                          \
+			node = handle->list.tail;                                                                                \
+			for (uint64_t i = handle->size; node && i > pos + 1; --i, node = node->prior)                            \
+				;                                                                                                    \
+		}                                                                                                            \
                                                                                                                      \
 		iterator->size = handle->size;                                                                               \
 		iterator->pos = pos;                                                                                         \
