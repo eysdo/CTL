@@ -65,7 +65,6 @@
 		if (!new_node)                                                                                               \
 			return CTL_MALLOC_FAILED;                                                                                \
                                                                                                                      \
-		++handle->size;                                                                                              \
 		new_node->data = data;                                                                                       \
 		new_node->next = handle->list.head.next;                                                                     \
                                                                                                                      \
@@ -78,6 +77,7 @@
 		if (handle->list.tail == &handle->list.head)                                                                 \
 			handle->list.tail = new_node;                                                                            \
                                                                                                                      \
+		++handle->size;                                                                                              \
 		return 0;                                                                                                    \
 	}                                                                                                                \
                                                                                                                      \
@@ -104,7 +104,6 @@
 		if (!new_node)                                                                                               \
 			return CTL_MALLOC_FAILED;                                                                                \
                                                                                                                      \
-		++handle->size;                                                                                              \
 		new_node->data = data;                                                                                       \
 		new_node->next = NULL;                                                                                       \
                                                                                                                      \
@@ -112,6 +111,7 @@
 		new_node->prior = handle->list.tail;                                                                         \
 		handle->list.tail = new_node;                                                                                \
                                                                                                                      \
+		++handle->size;                                                                                              \
 		return 0;                                                                                                    \
 	}                                                                                                                \
                                                                                                                      \
@@ -130,7 +130,6 @@
                                                                                                                      \
 	static inline int CTL_list_insert_##type(CTL_list_##type *handle, CTL_list_iterator_##type iterator, type data)  \
 	{                                                                                                                \
-		++handle->size;                                                                                              \
 		__CTL_DuLNode_##type *new_node = (__CTL_DuLNode_##type *)malloc(sizeof(__CTL_DuLNode_##type));               \
 		if (!new_node)                                                                                               \
 			return CTL_MALLOC_FAILED;                                                                                \
@@ -138,6 +137,7 @@
 		new_node->prior = iterator.node->prior;                                                                      \
 		new_node->next = iterator.node;                                                                              \
 		iterator.node->prior = new_node;                                                                             \
+		++handle->size;                                                                                              \
 		return 0;                                                                                                    \
 	}                                                                                                                \
                                                                                                                      \
@@ -179,7 +179,7 @@
 				;                                                                                                    \
 		}                                                                                                            \
 		else                                                                                                         \
-		{                                                                                                          \
+		{                                                                                                            \
 			node = handle->list.tail;                                                                                \
 			for (uint64_t i = handle->size; node && i > pos + 1; --i, node = node->prior)                            \
 				;                                                                                                    \

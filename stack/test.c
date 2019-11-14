@@ -6,10 +6,8 @@ CTL_STACK(CTL_vector, int);
 
 int main(void)
 {
-    CTL_vector_int container;
-    CTL_vector_new_int(&container, 10);
-    CTL_vector_stack_int data;
-    CTL_vector_stack_new_int(&data, &container);
+    CTL_vector_int data;
+    CTL_vector_new_int(&data, 10);
     CTL_vector_stack_push_int(&data, 0x1);
     int t;
     CTL_vector_stack_pop_int(&data, &t);

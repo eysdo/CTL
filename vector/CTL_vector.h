@@ -49,7 +49,6 @@
                                                                                                                            \
     static inline int CTL_vector_push_front_##type(CTL_vector_##type *handle, type data)                                   \
     {                                                                                                                      \
-        ++handle->size;                                                                                                    \
         if (handle->size > handle->capacity)                                                                               \
         {                                                                                                                  \
             type *ptr = (type *)malloc(2 * handle->capacity * sizeof(type));                                               \
@@ -60,12 +59,13 @@
             handle->base = ptr;                                                                                            \
         }                                                                                                                  \
                                                                                                                            \
-        for (uint64_t i = handle->size - 1; i > 1; --i)                                                                    \
+        for (uint64_t i = handle->size - 1; i >= 1; --i)                                                                   \
         {                                                                                                                  \
             handle->base[i] = handle->base[i - 1];                                                                         \
         }                                                                                                                  \
         handle->base[0] = data;                                                                                            \
                                                                                                                            \
+        ++handle->size;                                                                                                    \
         return 0;                                                                                                          \
     }                                                                                                                      \
                                                                                                                            \
@@ -81,7 +81,6 @@
                                                                                                                            \
     static inline int CTL_vector_push_back_##type(CTL_vector_##type *handle, type data)                                    \
     {                                                                                                                      \
-        ++handle->size;                                                                                                    \
                                                                                                                            \
         if (handle->size > handle->capacity)                                                                               \
         {                                                                                                                  \
@@ -94,6 +93,7 @@
         }                                                                                                                  \
                                                                                                                            \
         handle->base[handle->size - 1] = data;                                                                             \
+        ++handle->size;                                                                                                    \
         return 0;                                                                                                          \
     }                                                                                                                      \
                                                                                                                            \
@@ -104,7 +104,6 @@
                                                                                                                            \
     static inline int CTL_vector_insert_##type(CTL_vector_##type *handle, CTL_vector_iterator_##type iterator, type data)  \
     {                                                                                                                      \
-        ++handle->size;                                                                                                    \
         if (handle->size > handle->capacity)                                                                               \
         {                                                                                                                  \
             type *ptr = (type *)malloc(2 * handle->capacity * sizeof(type));                                               \
@@ -121,6 +120,7 @@
         }                                                                                                                  \
         handle->base[iterator.pos] = data;                                                                                 \
                                                                                                                            \
+        ++handle->size;                                                                                                    \
         return 0;                                                                                                          \
     }                                                                                                                      \
                                                                                                                            \
