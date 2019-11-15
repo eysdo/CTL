@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <malloc.h>
+#include <string.h>
 
 #define __CTL_DEQUE_NEW_NODE(node, size)              \
     do                                                \
@@ -27,10 +28,10 @@ typedef struct
 
 typedef struct CTL_deque_node
 {
-    int *base;
-    int *first;
-    int *last;
-    uint64_t capacity;
+    int *base; //基地址
+    int *first; //第一个存储数据的地址
+    int *last; //最后一个存储数据的地址
+    //uint64_t capacity;
 } CTL_deque_node;
 
 typedef struct
@@ -43,49 +44,44 @@ typedef struct
     } map;
     uint64_t buf_size;
     uint64_t size;
-    uint64_t capacity;
-    CTL_deque_node *start;
-    CTL_deque_node *finish;
+    //uint64_t capacity;
+    CTL_deque_node *start; //第一个指针
+    CTL_deque_node *finish; //最后一个指针
 } CTL_deque;
 
 int __CTL_DEQUE_MAP_EXPANSION(CTL_deque *handle)
 {
-    if (handle->start->first == handle->start->base || handle->finish->last == handle->finish->base + handle->buf_size - 1)
+
+    uint64_t lave = handle->map.capacity - handle->map.size;
+    CTL_deque_node *start;
+    CTL_deque_node *finish;
+
+    if (lave > 4)
     {
-        uint64_t lave = handle->map.capacity - handle->map.size;
-        CTL_deque_node *start;
-        CTL_deque_node *finish;
+        start = handle->map.base + (lave / 2);
+        finish = start + handle->map.size - 1;
 
-        if (lave > 2)
-        {
-            start = handle->map.base + (lave / 2);
-            finish = start + handle->map.size;
-            for (uint64_t i = 0; i < handle->map.size; ++i)
-            {
-                start[i] = handle->start[i];
-            }
-        }
-        else
-        {
-            uint64_t size = sizeof(CTL_deque_node) * handle->map.capacity * 2;
-            CTL_deque_node *base = (CTL_deque_node *)malloc(size);
-            if (!base)
-                return CTL_MALLOC_FAILED;
-
-            lave = size - handle->map.size;
-            start = base + (lave / 2);
-            finish = start + handle->map.size;
-            for (uint64_t i = 0; i < handle->map.size; ++i)
-            {
-                finish[i] = handle->start[i];
-            }
-            free(handle->map.base);
-            handle->map.base = base;
-            handle->map.capacity = size;
-        }
-        handle->start = start;
-        handle->finish = finish;
+        memmove(start, handle->start, sizeof(CTL_deque_node) * handle->map.size);
     }
+    else
+    {
+        uint64_t size = handle->map.capacity * 2;
+        CTL_deque_node *base = (CTL_deque_node *)malloc(sizeof(CTL_deque_node) * size);
+        if (!base)
+            return CTL_MALLOC_FAILED;
+
+        lave = size - handle->map.size;
+        start = base + (lave / 2);
+        finish = start + handle->map.size - 1;
+
+        memcpy(start, handle->start, sizeof(CTL_deque_node) * handle->map.size);
+
+        free(handle->map.base);
+        handle->map.base = base;
+        handle->map.capacity = size;
+    }
+    handle->start = start;
+    handle->finish = finish;
     return 0;
 }
 
@@ -96,51 +92,56 @@ int CTL_deque_new(CTL_deque *handle, uint64_t size)
     handle->map.base = (CTL_deque_node*)malloc(sizeof(CTL_deque_node) * size);
     if(!handle->map.base)
         return CTL_MALLOC_FAILED;
-    handle->start = handle->map.base + (size/2);
-    handle->start->base = NULL;
-    handle->start->first = NULL;
-    handle->start->last = NULL;
-    handle->finish = handle->finish;
+    handle->start = handle->map.base + (size/2) - 1;
+
+    handle->start->base = (int *)malloc(sizeof(int) * handle->buf_size);
+     handle->map.size = 1;
+    handle->start->first = handle->start->base;
+    handle->start->last = handle->start->first;
+    handle->finish = handle->start;
     handle->size = 0;
-    handle->capacity = 0;
+    //handle->capacity = 0;
     return 0;
 }
 
 int CTL_deque_push_front(CTL_deque *handle, int data)
 {
 
-    if(handle->start->first == handle->start->base)
+    if (handle->start->first == handle->start->base)
     {
-        if(handle->start->base)
-        {
-            __CTL_DEQUE_MAP_EXPANSION(handle);
-            --handle->start;
-        }
-        handle->start->base = (int*)malloc(sizeof(int) * handle->buf_size);
-        if(!handle->start->base)
+        __CTL_DEQUE_MAP_EXPANSION(handle);
+        --handle->start;
+
+        ++handle->map.size;
+        handle->start->base = (int *)malloc(sizeof(int) * handle->buf_size);
+        if (!handle->start->base)
             return CTL_MALLOC_FAILED;
-        handle->start->first = handle->start->base + handle->buf_size;
+        handle->start->first = handle->start->base + handle->buf_size - 1;
         handle->start->last = handle->start->first;
+        *handle->start->first = data;
     }
-    *--handle->start->first = data;
+    else
+    {
+        *--handle->start->first = data;
+    }
+
     ++handle->size;
     return 0;
 }
-/*
+
 int CTL_deque_pop_front(CTL_deque *handle)
 {
     if(handle->size < 1)
         return CTL_OUT_OF_RANGE;
-    CTL_vector_iterator___CTL_deque_node iterator;
-    CTL_vector_at___CTL_deque_node(&handle->map, &iterator, 0);
-    if(iterator.data->first == iterator.data->last)
+
+    if(handle->start->first == handle->start->base)
     {
-        free(iterator.data->base);
-        CTL_vector_pop_front___CTL_deque_node(&handle->map);
+        free(handle->start->base);
+        ++handle->start;
     }
     else
     {
-        ++iterator.data->first;
+        ++handle->start->first;
     }
     --handle->size;
     return 0;
@@ -148,56 +149,47 @@ int CTL_deque_pop_front(CTL_deque *handle)
 
 int CTL_deque_push_back(CTL_deque *handle, int data)
 {
-        CTL_vector_iterator___CTL_deque_node iterator;
-    CTL_vector_at___CTL_deque_node(&handle->map, &iterator, handle->map.size - 1);
-
-    if(iterator.data->first == NULL)
+    if (handle->finish->last == handle->finish->base + handle->buf_size - 1)
     {
-        iterator.data->first = iterator.data->base;
-        iterator.data->last = iterator.data->first;
-        *iterator.data->last = data;
-    }
-    else if (iterator.data->last < iterator.data->border)
-    {
-        *++iterator.data->last = data;
-    }
-    else if(iterator.data->last >= iterator.data->border)
-    {
-        __CTL_deque_node node;
-        __CTL_DEQUE_NEW_NODE(node, handle->buffer_size);
-        CTL_vector_push_back___CTL_deque_node(&handle->map, node);
-        CTL_vector_at___CTL_deque_node(&handle->map, &iterator, handle->map.size - 1);
-        iterator.data->first = iterator.data->base;
-        iterator.data->last = iterator.data->first;
-        *iterator.data->last = data;
+        __CTL_DEQUE_MAP_EXPANSION(handle);
+        ++handle->finish;
+        ++handle->map.size;
+        handle->finish->base = (int *)malloc(sizeof(int) * handle->buf_size);
+        if (!handle->finish->base)
+            return CTL_MALLOC_FAILED;
+        handle->finish->first = handle->finish->base;
+        handle->finish->last = handle->finish->first;
+        *handle->finish->last = data;
     }
     else
     {
-       return CTL_OUT_OF_RANGE;
+        *++handle->finish->last = data;
     }
+
     ++handle->size;
     return 0;
 }
 
+
 int CTL_deque_pop_back(CTL_deque *handle)
 {
-    if (handle->size < 1)
+    if(handle->size < 1)
         return CTL_OUT_OF_RANGE;
-    CTL_vector_iterator___CTL_deque_node iterator;
-    CTL_vector_at___CTL_deque_node(&handle->map, &iterator, handle->map.size - 1);
-    if (iterator.data->last == iterator.data->first)
+
+    if(handle->finish->last == handle->finish->base)
     {
-        free(iterator.data->base);
-        CTL_vector_pop_back___CTL_deque_node(&handle->map);
+        free(handle->finish->base);
+        --handle->finish;
     }
     else
     {
-        --iterator.data->last;
+        --handle->finish->last;
     }
     --handle->size;
     return 0;
 }
 
+/*
  int CTL_deque_insert(CTL_deque *handle, CTL_deque_iterator iterator, int data)
  {
     CTL_vector_iterator___CTL_deque_node map;
@@ -240,25 +232,23 @@ int CTL_deque_at(CTL_deque *handle, CTL_deque_iterator *iterator, uint64_t pos)
 */
 int main(void)
 {
+    
     CTL_deque handle;
     CTL_deque_new(&handle, 10);
     //CTL_deque_push_front(&handle, 1);
 
-    for (size_t i = 0; i < 20; i++)
+    for (size_t i = 0; i < 200; i++)
     {
         CTL_deque_push_front(&handle, i);
-        //printf("%d\n", *handle.map.base[0].last);
+        printf("%d\n", *handle.finish->last);
     }
-    /*
-    CTL_deque_iterator at;
-    CTL_deque_at(&handle, &at, 1);
-    printf("%d\n", *at.data);
-    for (size_t i = 0; i < 20; i++)
+    printf("\n\n");
+    for (size_t i = 0; i < 200; i++)
     {
-        printf("%d\n", *handle.map.base[1].last);
+        printf("%d\n", *handle.finish->last);
         CTL_deque_pop_back(&handle);
     }
-   */
+    
     return 0;
 }
 
