@@ -59,7 +59,7 @@
             handle->base = ptr;                                                                                            \
         }                                                                                                                  \
                                                                                                                            \
-        for (uint64_t i = handle->size - 1; i >= 1; --i)                                                                   \
+        for (uint64_t i = handle->size - 1; i >= 0 && handle->size != 0; --i)                                              \
         {                                                                                                                  \
             handle->base[i] = handle->base[i - 1];                                                                         \
         }                                                                                                                  \
