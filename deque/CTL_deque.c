@@ -20,12 +20,6 @@
 
 //#define __CTL_DEQUE_MAP_EXPANSION
 
-typedef struct
-{
-    int *data;
-    uint64_t pos;
-} CTL_deque_iterator;
-
 typedef struct CTL_deque_node
 {
     int *base; //基地址
@@ -33,6 +27,14 @@ typedef struct CTL_deque_node
     int *last; //最后一个存储数据的地址
     //uint64_t capacity;
 } CTL_deque_node;
+
+typedef struct
+{
+    int *data;
+    CTL_deque_node *node;
+    uint64_t pos;
+    uint64_t size;
+} CTL_deque_iterator;
 
 typedef struct
 {
@@ -90,9 +92,10 @@ int CTL_deque_new(CTL_deque *handle, uint64_t size)
     handle->map.capacity = size;
     handle->buf_size= size;
     handle->map.base = (CTL_deque_node*)malloc(sizeof(CTL_deque_node) * size);
+
     if(!handle->map.base)
         return CTL_MALLOC_FAILED;
-    handle->start = handle->map.base + (size/2) - 1;
+    handle->start = handle->map.base + (size/2);
 
     handle->start->base = (int *)malloc(sizeof(int) * handle->buf_size);
      handle->map.size = 1;
@@ -212,43 +215,43 @@ int CTL_deque_pop_back(CTL_deque *handle)
     }
     
  }
-
+*/
 int CTL_deque_at(CTL_deque *handle, CTL_deque_iterator *iterator, uint64_t pos)
 {
     if (pos > handle->size - 1 || pos < 0)
         return CTL_OUT_OF_RANGE;
-    uint64_t data_pos = pos%handle->buffer_size;
-    uint64_t node_pos = (pos - data_pos)/handle->buffer_size;
-
-    CTL_vector_iterator___CTL_deque_node map;
-    CTL_vector_at___CTL_deque_node(&handle->map, &map, node_pos);
+    uint64_t data_pos = (pos + (handle->start->first - handle->start->base))%handle->buf_size;
+    uint64_t node_pos = pos/handle->buf_size;
 
     iterator->pos = pos;
     iterator->size = handle->size;
-    iterator->node = map.data;
-    iterator->data = &map.data->first[data_pos];
+    iterator->node = &handle->start[node_pos];
+    iterator->data = &iterator->node->first[data_pos];
     return 0;
 }
-*/
+
 int main(void)
 {
     
     CTL_deque handle;
-    CTL_deque_new(&handle, 10);
+    CTL_deque_new(&handle, 1);
     //CTL_deque_push_front(&handle, 1);
 
     for (size_t i = 0; i < 200; i++)
     {
-        CTL_deque_push_front(&handle, i);
-        printf("%d\n", *handle.finish->last);
+        CTL_deque_push_back(&handle, i);
+        //printf("%d\n", *handle.finish->last);
     }
-    printf("\n\n");
+    CTL_deque_iterator it;
+    CTL_deque_at(&handle, &it, 99);
+    printf("%d \n\n", *it.data);
+    /*
     for (size_t i = 0; i < 200; i++)
     {
         printf("%d\n", *handle.finish->last);
         CTL_deque_pop_back(&handle);
     }
-    
+    */
     return 0;
 }
 
