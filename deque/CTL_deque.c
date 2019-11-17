@@ -221,24 +221,21 @@ int CTL_deque_insert(CTL_deque *handle, CTL_deque_iterator iterator, int data)
 
 int CTL_deque_erase(CTL_deque *handle, CTL_deque_iterator iterator)
 {
-    /*
-    int ret = CTL_deque_push_back(handle, *handle->finish->last);
-    if (ret)
-        return ret;
-    CTL_deque_node *finish = (handle->finish->first == handle->finish->last) ? handle->finish - 1 : handle->finish;
-    */
-
     if (iterator.data != iterator.node->last)
     {
-        //memmove(iterator.data, iterator.data + 1, sizeof(int) * (iterator.node->last - iterator.data - 1));
         uint64_t node_pos = iterator.pos / handle->buf_size;
         CTL_deque_node *start = &handle->start[node_pos];
         int *first = iterator.data;
         int *last = start->last;
-        for (size_t i = handle->map.size - 1; i > node_pos; --i)
+        for (size_t i = handle->map.size - 1; i >= node_pos; --i)
         {
             memmove(first, first + 1, sizeof(int) * (last - first));
             ++start;
+            if(start > handle->finish)
+            {
+                --handle->finish->last;
+                break;
+            }
             *last = *start->first;
             first = start->first;
             last = start->last;
@@ -258,8 +255,9 @@ int CTL_deque_erase(CTL_deque *handle, CTL_deque_iterator iterator)
            --handle->finish;
            --handle->map.size;
         }
-        return 0;
     }
+    --handle->size;
+    return 0;
 }
 
 int CTL_deque_at(CTL_deque *handle, CTL_deque_iterator *iterator, uint64_t pos)
@@ -293,7 +291,7 @@ int main(void)
     CTL_deque_erase(&handle, it);
     //printf("%d \n\n", *it.data);
 
-    for (size_t i = 0; i < 100; i++)
+    for (size_t i = 0; i < 99; i++)
     {
         printf("%d\n", *handle.finish->last);
         CTL_deque_pop_back(&handle);
