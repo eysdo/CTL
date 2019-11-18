@@ -23,8 +23,8 @@ typedef struct
 } CTL_vector_iterator;
 
 static inline int CTL_vector_new(CTL_vector *handle, size_t size);
-static inline void clear(CTL_vector *handle);
 static inline void CTL_vector_delete(CTL_vector *handle);
+static inline void CTL_vector_clear(CTL_vector *handle);
 
 static inline int CTL_vector_push_front(CTL_vector *handle, type data);
 static inline void CTL_vector_pop_front(CTL_vector *handle);
@@ -51,15 +51,15 @@ static inline int CTL_vector_new(CTL_vector *handle, size_t size)
     return 0;
 }
 
-static inline void clear(CTL_vector *handle)
-{
-    handle->size = 0;
-}
-
 static inline void CTL_vector_delete(CTL_vector *handle)
 {
+    CTL_vector_clear(handle);
     free(handle->base);
-    return;
+}
+
+static inline void CTL_vector_clear(CTL_vector *handle)
+{
+    handle->size = 0;
 }
 
 static inline int CTL_vector_push_front(CTL_vector *handle, type data)
@@ -86,7 +86,6 @@ static inline void CTL_vector_pop_front(CTL_vector *handle)
 {
     memmove(handle->base, handle->base+1, handle->size);
     --handle->size;
-    return;
 }
 
 static inline int CTL_vector_push_back(CTL_vector *handle, type data)
@@ -140,7 +139,6 @@ static inline void CTL_vector_erase(CTL_vector *handle, CTL_vector_iterator iter
 {
     memmove(iterator.data, iterator.data + 1, sizeof(type) * (handle->size - iterator.pos - 1));
     --handle->size;
-    return;
 }
 
 static inline int CTL_vector_at(CTL_vector *handle, CTL_vector_iterator *iterator, size_t pos)
