@@ -15,5 +15,6 @@ int main(void)
     CTL_vector_insert(&data, it, 99);
     CTL_vector_at(&data, &it, 0);
     CTL_vector_erase(&data, it);
+    CTL_vector_delete(&data);
     return 0;
 }

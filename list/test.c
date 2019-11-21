@@ -25,5 +25,6 @@ int main(void)
     CTL_list_iterator it;
     CTL_list_at(&data, &it, 5);
     *it.data = 999;
+    CTL_list_delete(&data);
     return 0;
 }
