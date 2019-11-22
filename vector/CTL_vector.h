@@ -19,7 +19,7 @@ typedef struct
 typedef struct
 {
     type *data;
-    size_t pos;
+    ptrdiff_t pos;
 } CTL_vector_iterator;
 
 static inline void CTL_vector_new(CTL_vector *handle, size_t size);
@@ -133,19 +133,16 @@ static inline void CTL_vector_at(CTL_vector *handle, CTL_vector_iterator *iterat
 {
     iterator->data = handle->base + pos;
     iterator->pos = pos;
-    return 0;
 }
 
 static inline void CTL_vector_iterator_add(CTL_vector_iterator *handle, size_t pos)
 {
     handle->data += pos;
     handle->pos += pos;
-    return 0;
 }
 
 static inline void CTL_vector_iterator_sub(CTL_vector_iterator *handle, size_t pos)
 {
     handle->data -= pos;
     handle->pos -= pos;
-    return 0;
 }
