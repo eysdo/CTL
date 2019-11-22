@@ -4,13 +4,12 @@
 #include <stdint.h>
 #include <assert.h>
 
-#include "../error/CTL_error.h"
+#include "../public/CTL_public.h"
 #include "../allocator/CTL_allocator.h"
-
 
 typedef int type;
 
-	/*声明*/
+/*声明*/
 typedef struct __CTL_DuLNode
 {
 	type data;
@@ -39,10 +38,10 @@ static inline void CTL_list_push(CTL_list *handle, type data, int direction);
 static inline void CTL_list_pop(CTL_list *handle, int direction);
 
 static inline void CTL_list_insert(CTL_list *handle, CTL_list_iterator iterator, type data);
-void CTL_list_erase(CTL_list *handle, CTL_list_iterator iterator);
+static inline void CTL_list_erase(CTL_list *handle, CTL_list_iterator iterator);
 
-CTL_list_iterator CTL_list_at(CTL_list *handle, size_t pos);
-static inline void CTL_list_iterator_move(CTL_list_iterator *handle, size_t pos, int direction);
+static inline CTL_list_iterator CTL_list_at(const CTL_list *handle, size_t pos);
+static inline CTL_list_iterator CTL_list_iterator_move(const CTL_list_iterator *handle, size_t pos, int direction);
 
 /*实现*/
 static inline void CTL_list_new(CTL_list *handle)
@@ -117,7 +116,7 @@ static inline void CTL_list_insert(CTL_list *handle, CTL_list_iterator iterator,
 	++handle->size;
 }
 
-void CTL_list_erase(CTL_list *handle, CTL_list_iterator iterator)
+static inline void CTL_list_erase(CTL_list *handle, CTL_list_iterator iterator)
 {
 	--handle->size;
 
@@ -127,9 +126,9 @@ void CTL_list_erase(CTL_list *handle, CTL_list_iterator iterator)
 	deallocate(iterator.node, sizeof(__CTL_DuLNode));
 }
 
-CTL_list_iterator CTL_list_at(CTL_list *handle, size_t pos)
+static inline CTL_list_iterator CTL_list_at(const CTL_list *handle, size_t pos)
 {
-		CTL_list_iterator result;
+	CTL_list_iterator result;
 	__CTL_DuLNode *node = handle->list;
 
 	if (pos + 1 < handle->size / 2)
@@ -148,22 +147,25 @@ CTL_list_iterator CTL_list_at(CTL_list *handle, size_t pos)
 	return result;
 }
 
-static inline void CTL_list_iterator_move(CTL_list_iterator *handle, size_t pos, int direction)
+static inline CTL_list_iterator CTL_list_iterator_move(const CTL_list_iterator *handle, size_t pos, int direction)
 {
+	CTL_list_iterator result;
 	if (direction == CTL_NEXT)
 	{
 		__CTL_DuLNode *node = handle->node;
 		for (size_t i = 0; i < pos; ++i, node = node->next)
 			;
-		handle->node = node;
-		handle->data = &node->data;
+		result.node = node;
+		result.data = &node->data;
 	}
 	else
 	{
 		__CTL_DuLNode *node = handle->node;
 		for (size_t i = 0; node && i < pos; ++i, node = node->prior)
 			;
-		handle->node = node;
-		handle->data = &node->data;
+		result.node = node;
+		result.data = &node->data;
 	}
+
+	return result;
 }

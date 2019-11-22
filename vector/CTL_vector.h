@@ -4,7 +4,7 @@
 #include <malloc.h>
 #include <string.h>
 
-#include "../error/CTL_error.h"
+#include "../public/CTL_public.h"
 #include "../allocator/CTL_allocator.h"
 
 typedef int type;
@@ -32,8 +32,8 @@ static inline void CTL_vector_pop(CTL_vector *handle, int direction);
 static inline void CTL_vector_insert(CTL_vector *handle, CTL_vector_iterator iterator, type data);
 static inline void CTL_vector_erase(CTL_vector *handle, CTL_vector_iterator iterator);
 
-static inline void CTL_vector_at(CTL_vector *handle, CTL_vector_iterator *iterator, size_t pos);
-static inline void CTL_vector_iterator_move(CTL_vector_iterator *handle, size_t pos, int direction);
+static inline CTL_vector_iterator CTL_vector_at(const CTL_vector *handle, CTL_vector_iterator *iterator, size_t pos);
+static inline CTL_vector_iterator CTL_vector_iterator_move(const CTL_vector_iterator *handle, size_t pos, int direction);
 
 /*实现*/
 static inline void CTL_vector_new(CTL_vector *handle, size_t size)
@@ -129,22 +129,29 @@ static inline void CTL_vector_erase(CTL_vector *handle, CTL_vector_iterator iter
     --handle->size;
 }
 
-static inline void CTL_vector_at(CTL_vector *handle, CTL_vector_iterator *iterator, size_t pos)
+static inline CTL_vector_iterator CTL_vector_at(const CTL_vector *handle, CTL_vector_iterator *iterator, size_t pos)
 {
-    iterator->data = handle->base + pos;
-    iterator->node = handle->base + pos;
+    CTL_vector_iterator result;
+    result.data = handle->base + pos;
+    result.node = handle->base + pos;
+    
+    return result;
 }
 
-static inline void CTL_vector_iterator_move(CTL_vector_iterator *handle, size_t pos, int direction)
+static inline CTL_vector_iterator CTL_vector_iterator_move(const CTL_vector_iterator *handle, size_t pos, int direction)
 {
+    CTL_vector_iterator result;
+    
     if (direction == CTL_NEXT)
     {
-        handle->data += pos;
-        handle->node += pos;
+        result.data = handle->data + pos;
+        result.data = handle->node + pos;
     }
     else
     {
-        handle->data -= pos;
-        handle->node -= pos;
+        result.data = handle->data - pos;
+        result.data = handle->node - pos;
     }
+
+    return result;
 }
