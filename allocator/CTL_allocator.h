@@ -1,7 +1,11 @@
+#pragma once
+
 #include <stdbool.h>
 #include <assert.h>
 #include <malloc.h>
 #include <string.h>
+
+int Memory = 0;
 
 void (*CTL_malloc_handler)() = NULL; //内存分配失败 处理函数
 

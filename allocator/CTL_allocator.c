@@ -62,6 +62,7 @@ static size_t heap_size = 0;
 
 static inline void *allocate(size_t size)
 {
+    ++Memory;
     obj *result;
 
     if (size > MAX_BYTES)
@@ -101,6 +102,7 @@ static inline void *reallocate(void *old_ptr, size_t old_size, size_t new_size)
 
 static inline void deallocate(void *ptr, size_t size)
 {
+    --Memory;
     //释放内存 大于 MAX_BYTES 直接 交给 一级分配器
     if (size > MAX_BYTES)
     {
@@ -183,7 +185,7 @@ static inline void *chunk_alloc(size_t size, int *nobjs)
         size_t bytes_to_get = 2 * bytes_total + ROUND_UP(heap_size >> 4);
 
         //如果 内存池还有剩余 就把它们 放入 free list 中
-        if (bytes_total > 0)
+        if (bytes_left > 0)
         {
             obj **my_free_list = free_list + FREELIST_INDEX(bytes_left);
             ((obj *)begin_free)->free_list_link = *my_free_list;
