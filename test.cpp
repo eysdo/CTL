@@ -1,37 +1,18 @@
 #include <iostream>
 #include <vector>
-#include <deque>
+#include <list>
+#include <algorithm>
+#include <malloc.h>
 
 using namespace std;
 
-struct test
+int main()
 {
-    int a;
-    int* b = &a;
-};
+    int dim[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    list<int> d1;
+    d1.push_back(88);
+    auto i = d1.begin();
 
-int main(void)
-{
-    vector<test> t(1);
-    cout << t.capacity()<<endl;
-    test a;
-    t.push_back(a);
-    cout << t[0].b << endl;
-    t.push_back(a);
-    t.push_back(a);
-    t.push_back(a);
-    t.push_back(a);
-    t.push_back(a);
-    t.push_back(a);
-    t.push_back(a);
-    t.push_back(a);
-    t.push_back(a);
-    t.push_back(a);
-    t.push_back(a);
-    t.push_back(a);
-    t.push_back(a);
-    t.push_back(a);
-    t.push_back(a);
-    cout << t[0].b << endl;
+    cout << d1.size() << endl;
     return 0;
 }
