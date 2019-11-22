@@ -19,25 +19,21 @@ typedef struct
 typedef struct
 {
     type *data;
-    ptrdiff_t pos;
+    type *node;
 } CTL_vector_iterator;
 
 static inline void CTL_vector_new(CTL_vector *handle, size_t size);
 static inline void CTL_vector_delete(CTL_vector *handle);
 static inline void CTL_vector_clear(CTL_vector *handle);
 
-static inline void CTL_vector_push_front(CTL_vector *handle, type data);
-static inline void CTL_vector_pop_front(CTL_vector *handle);
-
-static inline void CTL_vector_push_back(CTL_vector *handle, type data);
-static inline void CTL_vector_pop_back(CTL_vector *handle);
+static inline void CTL_vector_push(CTL_vector *handle, type data, int direction);
+static inline void CTL_vector_pop(CTL_vector *handle, int direction);
 
 static inline void CTL_vector_insert(CTL_vector *handle, CTL_vector_iterator iterator, type data);
 static inline void CTL_vector_erase(CTL_vector *handle, CTL_vector_iterator iterator);
 
 static inline void CTL_vector_at(CTL_vector *handle, CTL_vector_iterator *iterator, size_t pos);
-static inline void CTL_vector_iterator_add(CTL_vector_iterator *handle, size_t pos);
-static inline void CTL_vector_iterator_sub(CTL_vector_iterator *handle, size_t pos);
+static inline void CTL_vector_iterator_move(CTL_vector_iterator *handle, size_t pos, int direction);
 
 /*实现*/
 static inline void CTL_vector_new(CTL_vector *handle, size_t size)
@@ -58,49 +54,53 @@ static inline void CTL_vector_clear(CTL_vector *handle)
     handle->size = 0;
 }
 
-static inline void CTL_vector_push_front(CTL_vector *handle, type data)
+static inline void CTL_vector_push(CTL_vector *handle, type data, int direction)
 {
-    if (handle->size == handle->capacity)
+    if (direction == CTL_NEXT)
     {
-        type *ptr = (type *)allocate(2 * handle->capacity * sizeof(type));
-        memmove(ptr + 1, handle->base, handle->capacity);
-        deallocate(handle->base, handle->capacity * sizeof(type));
-        handle->base = ptr;
-        handle->capacity *= 2;
+        if (handle->size == handle->capacity)
+        {
+            type *ptr = (type *)allocate(2 * handle->capacity * sizeof(type));
+            memmove(ptr, handle->base, handle->capacity * sizeof(type));
+            deallocate(handle->base, handle->capacity * sizeof(type));
+            handle->base = ptr;
+            handle->capacity *= 2;
+        }
+
+        handle->base[handle->size] = data;
+        ++handle->size;
     }
     else
     {
-        memmove(handle->base + 1, handle->base, handle->size);
+        if (handle->size == handle->capacity)
+        {
+            type *ptr = (type *)allocate(2 * handle->capacity * sizeof(type));
+            memmove(ptr + 1, handle->base, handle->capacity * sizeof(type));
+            deallocate(handle->base, handle->capacity * sizeof(type));
+            handle->base = ptr;
+            handle->capacity *= 2;
+        }
+        else
+        {
+            memmove(handle->base + 1, handle->base, handle->size * sizeof(type));
+        }
+
+        handle->base[0] = data;
+        ++handle->size;
     }
-
-    handle->base[0] = data;
-    ++handle->size;
 }
 
-static inline void CTL_vector_pop_front(CTL_vector *handle)
+static inline void CTL_vector_pop(CTL_vector *handle, int direction)
 {
-    memmove(handle->base, handle->base+1, handle->size);
-    --handle->size;
-}
-
-static inline void CTL_vector_push_back(CTL_vector *handle, type data)
-{
-    if (handle->size == handle->capacity)
+    if (direction == CTL_NEXT)
     {
-        type *ptr = (type *)allocate(2 * handle->capacity * sizeof(type));
-        memcpy(ptr, handle->base, handle->capacity);
-        deallocate(handle->base, handle->capacity * sizeof(type));
-        handle->base = ptr;
-        handle->capacity *= 2;
+        --handle->size;
     }
-
-    handle->base[handle->size] = data;
-    ++handle->size;
-}
-
-static inline void CTL_vector_pop_back(CTL_vector *handle)
-{
-    --handle->size;
+    else
+    {
+        memmove(handle->base, handle->base + 1, handle->size * sizeof(type));
+        --handle->size;
+    }
 }
 
 static inline void CTL_vector_insert(CTL_vector *handle, CTL_vector_iterator iterator, type data)
@@ -108,41 +108,43 @@ static inline void CTL_vector_insert(CTL_vector *handle, CTL_vector_iterator ite
     if (handle->size == handle->capacity)
     {
         type *ptr = (type *)allocate(2 * handle->capacity * sizeof(type));
-        memcpy(ptr, handle->base, sizeof(type) * iterator.pos);
-        memcpy(ptr + iterator.pos + 1, handle->base + iterator.pos, sizeof(type) * (handle->size - iterator.pos));
+        memmove(ptr, handle->base, sizeof(type) * (iterator.data - handle->base));
+        memmove(ptr + (iterator.data - handle->base) + 1, iterator.data, sizeof(type) * (handle->size - (iterator.data - handle->base)));
         deallocate(handle->base, handle->capacity * sizeof(type));
         handle->base = ptr;
         handle->capacity *= 2;
     }
     else
     {
-         memmove(iterator.data + 1, iterator.data, sizeof(type) * (handle->size - iterator.pos));
+        memmove(iterator.data + 1, iterator.data, sizeof(type) * (handle->size - (iterator.data - handle->base)));
     }
 
-    handle->base[iterator.pos] = data;
+    handle->base[(iterator.data - handle->base)] = data;
     ++handle->size;
 }
 
 static inline void CTL_vector_erase(CTL_vector *handle, CTL_vector_iterator iterator)
 {
-    memmove(iterator.data, iterator.data + 1, sizeof(type) * (handle->size - iterator.pos - 1));
+    memmove(iterator.data, iterator.data + 1, sizeof(type) * (handle->size - (iterator.data - handle->base) - 1));
     --handle->size;
 }
 
 static inline void CTL_vector_at(CTL_vector *handle, CTL_vector_iterator *iterator, size_t pos)
 {
     iterator->data = handle->base + pos;
-    iterator->pos = pos;
+    iterator->node = handle->base + pos;
 }
 
-static inline void CTL_vector_iterator_add(CTL_vector_iterator *handle, size_t pos)
+static inline void CTL_vector_iterator_move(CTL_vector_iterator *handle, size_t pos, int direction)
 {
-    handle->data += pos;
-    handle->pos += pos;
-}
-
-static inline void CTL_vector_iterator_sub(CTL_vector_iterator *handle, size_t pos)
-{
-    handle->data -= pos;
-    handle->pos -= pos;
+    if (direction == CTL_NEXT)
+    {
+        handle->data += pos;
+        handle->node += pos;
+    }
+    else
+    {
+        handle->data -= pos;
+        handle->node -= pos;
+    }
 }

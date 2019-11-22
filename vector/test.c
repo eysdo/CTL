@@ -3,12 +3,12 @@
 
 int main(void)
 {
-//    CTL_vector_queue;
+    //    CTL_vector_queue;
     CTL_vector data;
     CTL_vector_new(&data, 1);
-    CTL_vector_push_back(&data, 1);
-    CTL_vector_push_front(&data, 0x8);
-    CTL_vector_push_back(&data, 0x9);
+    CTL_vector_push(&data, 1, CTL_NEXT);
+    CTL_vector_push(&data, 2, 0);
+    CTL_vector_push(&data, 3, 1);
     CTL_vector_iterator it;
     CTL_vector_at(&data, &it, 0);
     //CTL_vector_iterator_sub(&it, 1);
