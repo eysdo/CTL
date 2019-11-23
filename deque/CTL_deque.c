@@ -32,8 +32,7 @@ typedef struct
 #define set_node(dest, src, buf_size)    \
     (dest).node = (src);                 \
     (dest).first = *(src);               \
-    (dest).last = *(src) + (buf_size)-1; \
-    (dest).cur = *(src);
+    (dest).last = *(src) + (buf_size)-1;
 
 void CTL_deque_new(CTL_deque *handle, size_t buf_size)
 {
@@ -46,10 +45,11 @@ void CTL_deque_new(CTL_deque *handle, size_t buf_size)
     type **start = handle->map + ((handle->map_size - 1) / 2);
     type **finish = start;
     *start = allocate(sizeof(type) * handle->buf_size);
-
     //设置 begin和end 两个迭代器
     set_node(handle->begin, start, handle->buf_size);
+    handle->begin.cur = *start;
     set_node(handle->end, finish, handle->buf_size);
+    handle->end.cur = *finish;
 }
 
 void reallocate_map(CTL_deque *handle, size_t nodes_to_add, bool front)
@@ -82,7 +82,9 @@ void reallocate_map(CTL_deque *handle, size_t nodes_to_add, bool front)
     }
 
     set_node(handle->begin, new_start, handle->buf_size);
+    handle->begin.cur = *new_start;
     set_node(handle->end, new_start + num_old_nodes - 1, handle->buf_size);
+    handle->end.cur = *(new_start + num_old_nodes - 1);
 }
 
 void push_aux(CTL_deque *handle, bool front)
@@ -99,7 +101,7 @@ void push_aux(CTL_deque *handle, bool front)
         //设置begin 迭代器
         --handle->begin.node;
         set_node(handle->begin, handle->begin.node, handle->buf_size);
-        handle->begin.cur = handle->begin.last;
+        handle->begin.cur = handle->begin.last - 1;
     }
     else
     {
@@ -113,6 +115,7 @@ void push_aux(CTL_deque *handle, bool front)
         //设置end 迭代器
         ++handle->end.node;
         set_node(handle->end, handle->end.node, handle->buf_size);
+        handle->end.cur = handle->end.first;
     }
 }
 
@@ -133,15 +136,15 @@ void CTL_deque_push(CTL_deque *handle, int data, bool front)
     }
     else
     {
-        if (handle->end.cur != handle->end.last)
+        if (handle->end.cur != handle->end.last - 1)
         {
             //最后一个缓存区 尚有 空间
-            *(++handle->end.cur) = data;
+            *(handle->end.cur++) = data;
         }
         else
         {
-            push_aux(handle, false);
-             *handle->end.cur = data;
+            *handle->end.cur = data;
+             push_aux(handle, false);
         }
     }
 }
@@ -160,16 +163,19 @@ void pop_aux(CTL_deque *handle, bool front)
         deallocate(handle->end.node, sizeof(type) * handle->map_size);
         --handle->end.node;
         set_node(handle->end, handle->end.node, handle->buf_size);
-        handle->end.cur = handle->end.last;
+        handle->end.cur = handle->end.last - 1;
     }
 }
 
 void CTL_deque_pop(CTL_deque *handle, int *data, bool front)
 {
+    //对空deque操作的话 直接断言
+    //assert(handle->begin.cur != handle->end.cur);
+
     if (front)
     {
         *data = *handle->begin.cur;
-        if (handle->begin.cur != handle->begin.last)
+        if (handle->begin.cur != handle->begin.last - 1)
         {
             //缓存区 更多元素
             //最后一个缓存区 尚有 一个空间
@@ -183,7 +189,6 @@ void CTL_deque_pop(CTL_deque *handle, int *data, bool front)
     }
     else
     {
-        *data = *handle->end.cur;
         if (handle->end.cur != handle->end.first)
         {
             //缓存区 更多元素
@@ -195,6 +200,7 @@ void CTL_deque_pop(CTL_deque *handle, int *data, bool front)
             //仅有一个元素
             pop_aux(handle, false);
         }
+        *data = *handle->end.cur;
     }
 }
 
@@ -203,17 +209,22 @@ int main(void)
 
     CTL_deque handle;
     CTL_deque_new(&handle, 10);
+    
     for (size_t i = 0; i < 100; i++)
     {
         CTL_deque_push(&handle, i, false);
     }
 
+    //printf("%d %d\n", *handle.begin.cur, *handle.end.cur);
+    
+    
     int t = 0;
     for (size_t i = 0; i < 100; i++)
     {
         CTL_deque_pop(&handle, &t, true);
         printf("%d\n", t);
     }
+    
     printf("%d\n", debug_mem);
     return 0;
 }
