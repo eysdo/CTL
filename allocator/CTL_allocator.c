@@ -62,7 +62,7 @@ static size_t heap_size = 0;
 
 static inline void *allocate(size_t size)
 {
-    ++Memory;
+    ++debug_mem;
     obj *result;
 
     if (size > MAX_BYTES)
@@ -102,7 +102,7 @@ static inline void *reallocate(void *old_ptr, size_t old_size, size_t new_size)
 
 static inline void deallocate(void *ptr, size_t size)
 {
-    --Memory;
+    --debug_mem;
     //释放内存 大于 MAX_BYTES 直接 交给 一级分配器
     if (size > MAX_BYTES)
     {

@@ -5,7 +5,7 @@
 #include <malloc.h>
 #include <string.h>
 
-int Memory = 0;
+int debug_mem = 0;
 
 void (*CTL_malloc_handler)() = NULL; //内存分配失败 处理函数
 
