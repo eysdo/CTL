@@ -170,7 +170,7 @@ void pop_aux(CTL_deque *handle, bool front)
 void CTL_deque_pop(CTL_deque *handle, int *data, bool front)
 {
     //对空deque操作的话 直接断言
-    //assert(handle->begin.cur != handle->end.cur);
+    assert(handle->begin.cur != handle->end.cur);
 
     if (front)
     {
@@ -202,6 +202,35 @@ void CTL_deque_pop(CTL_deque *handle, int *data, bool front)
         }
         *data = *handle->end.cur;
     }
+}
+
+void CTL_deque_clear(CTL_deque *handle)
+{
+    //删除 第二个 - 倒数第二个 缓存区
+
+    // 删除前后两个数组的元素.
+    if (handle->begin.node != handle->end.node)
+    {
+        //释放缓存区
+        for (type **node = handle->begin.node + 1; node <= handle->end.node; ++node)
+        {
+            deallocate(*node, sizeof(type) * handle->buf_size);
+        }
+    }
+
+    //重新调整map
+    type **start = handle->begin.node;
+    type **finish = start;
+    //设置 begin和end 两个迭代器
+    set_node(handle->begin, start, handle->buf_size);
+    handle->begin.cur = *start;
+    set_node(handle->end, finish, handle->buf_size);
+    handle->end.cur = *finish;
+}
+
+void CTL_deque_erase(CTL_deque *handle, CTL_deque_iterator iterator)
+{
+
 }
 
 int main(void)
