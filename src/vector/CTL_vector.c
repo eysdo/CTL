@@ -1,5 +1,3 @@
-#pragma once
-
 #include <stdint.h>
 #include <malloc.h>
 #include <string.h>

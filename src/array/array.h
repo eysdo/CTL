@@ -11,14 +11,14 @@ typedef int type;
 
 typedef struct
 {
-    type *begin;
-    type *end;
-} CTL_array;
+    type *data;
+} CTL_array_iterator;
 
 typedef struct
 {
-    type *data;
-} CTL_array_iterator;
+    CTL_array_iterator begin;
+    CTL_array_iterator end;
+} CTL_array;
 
 void CTL_array_new(CTL_array *handle, type *begin, type *end);
 
@@ -28,9 +28,9 @@ void CTL_array_push_back(CTL_array *handle, type data);
 
 void CTL_array_pop_back(CTL_array *handle);
 
-void CTL_array_insert(CTL_array *handle, CTL_array_iterator iterator, type data);
+void CTL_array_insert(CTL_array *handle, const CTL_array_iterator *iterator, type data);
 
-void CTL_array_erase(CTL_array *handle, CTL_array_iterator iterator);
+void CTL_array_erase(CTL_array *handle, const CTL_array_iterator *iterator);
 
 CTL_array_iterator CTL_array_at(const CTL_array *handle, size_t pos);
 
