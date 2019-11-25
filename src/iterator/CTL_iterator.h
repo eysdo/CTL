@@ -2,8 +2,8 @@
 #include <string.h>
 
 //通用API
-#define CTL_iterator_move(T_containers, handle, pos, front) \
-        T_containers##_move(handle, pos, front);
+#define CTL_iterator_move(T_containers, handle, pos, sub) \
+        T_containers##_move(handle, pos, sub);
 
 #define CTL_iterator_equal(T_containers, left, right) \
         T_containers##_equal(left, right);

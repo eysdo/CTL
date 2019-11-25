@@ -45,11 +45,11 @@ CTL_array_iterator CTL_array_at(const CTL_array *handle, size_t pos)
     return result;
 }
 
-CTL_array_iterator CTL_array_iterator_move(const CTL_array_iterator *handle, size_t pos, bool front)
+CTL_array_iterator CTL_array_iterator_move(const CTL_array_iterator *handle, size_t pos, bool sub)
 {
     CTL_array_iterator result;
 
-    if (front)
+    if (sub)
     {
         result.data = handle->data - pos;
     }

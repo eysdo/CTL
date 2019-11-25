@@ -34,7 +34,7 @@ void CTL_array_erase(CTL_array *handle, const CTL_array_iterator *iterator);
 
 CTL_array_iterator CTL_array_at(const CTL_array *handle, size_t pos);
 
-CTL_array_iterator CTL_array_iterator_move(const CTL_array_iterator *handle, size_t pos, bool front);
+CTL_array_iterator CTL_array_iterator_move(const CTL_array_iterator *handle, size_t pos, bool sub);
 
 bool CTL_array_iterator_equal(const CTL_array_iterator *left, const CTL_array_iterator *right);
 
