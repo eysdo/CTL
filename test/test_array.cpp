@@ -6,8 +6,8 @@
 
 extern "C"
 {
-#include "../src/array/array.h"
-#include "../src/array/array.c"
+#include "../src/array/CTL_array.h"
+#include "../src/array/CTL_array.c"
 }
 
 using namespace std;

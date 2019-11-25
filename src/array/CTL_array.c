@@ -2,7 +2,7 @@
 #include <malloc.h>
 #include <string.h>
 
-#include "./array.h"
+#include "./CTL_array.h"
 
 void CTL_array_new(CTL_array *handle, type *begin, type *end)
 {
