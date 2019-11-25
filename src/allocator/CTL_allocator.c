@@ -49,6 +49,9 @@ typedef union obj //free list 节点
     union obj *free_list_link; //指向下一个节点
     char client_data[1];       //指向内存块
 } obj;
+//这里先看一下 obj联合体 书上说此联合体为 一物两用 同时指向下一个节点 和 内存块
+//其实可以理解为 一个语法糖 这里client_data 指向内存块
+//free_list_link 也指向内存块 也就是 下一个节点的地址 存放在内存块中
 
 static void *refill(size_t size); //free list 填充函数
 
@@ -56,9 +59,10 @@ static void *chunk_alloc(size_t size, int *nobjs); //该函数 负责向内存�
 
 static obj *free_list[NFREELISTS] = {NULL};
 
-static char *begin_free = 0;
-static char *end_free = 0;
-static size_t heap_size = 0;
+//这三个变量 负责管理内存池
+static char *begin_free = 0;// 内存池的首地址
+static char *end_free = 0;  //内存池的结束地址
+static size_t heap_size = 0;//大小
 
 void *CTL_allocate(size_t size)
 {
@@ -74,7 +78,7 @@ void *CTL_allocate(size_t size)
     obj **my_free_list = free_list + FREELIST_INDEX(size);
     result = *my_free_list;
 
-    //如果 没用可以内存块 就重新填重 free list
+    //如果 没用可以内存块 就重新填充 free list
     if (!result)
     {
         result = refill(ROUND_UP(size));
