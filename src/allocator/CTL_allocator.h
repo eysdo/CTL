@@ -7,7 +7,7 @@
 
 int CTL_debug_mem = 0;
 
-void (*CTL_malloc_handler)() = NULL; //内存分配失败 处理函数
+void (*CTL_malloc_handler)() = NULL; //内存分配失败 处理函数 由用户自定义
 
 void *CTL_allocate(size_t size); //申请内存
 
