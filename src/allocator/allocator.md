@@ -106,7 +106,8 @@ static obj *free_list[NFREELISTS] = {NULL};
 ![二级分配器 内存池示意图](https://github.com/inie0722/CTL/blob/preview/img/%E4%BA%8C%E7%BA%A7%E5%88%86%E9%85%8D%E5%99%A8%20%E5%86%85%E5%AD%98%E6%B1%A0%E7%A4%BA%E6%84%8F%E5%9B%BE.png?raw=true "二级分配器 内存池示意图")	
     二级分配器 维护着 一个内存池和16个free list<br>
     16个free list分别存放8,16,24,32,40,48,56,64,72,80,88,96,104,112,120,128,bytes的内存块<br>
-    内存申请过程 大概如下 此图为简易过程<br>
+
+  内存申请过程 大概如下 此图为简易过程
 ![二级分配器 内存分配 简易过程](https://github.com/inie0722/CTL/blob/preview/img/%E4%BA%8C%E7%BA%A7%E5%88%86%E9%85%8D%E5%99%A8%20%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%20%E7%AE%80%E6%98%93%E8%BF%87%E7%A8%8B.png?raw=true "二级分配器 内存分配 简易过程")
 
 __CTL_allocate__
@@ -223,7 +224,7 @@ void *CTL_reallocate(void *old_ptr, size_t old_size, size_t new_size)
 内存池实现
 ---
 在看chunk_allo 源码前 先看一下 二级分配器工作原理 示例图
-![二级分配器工作原理 详细过程](https://github.com/inie0722/CTL/blob/preview/img/%E4%BA%8C%E7%BA%A7%E5%88%86%E9%85%8D%E5%99%A8%20%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%20%E7%AE%80%E6%98%93%E8%BF%87%E7%A8%8B.png?raw=true "二级分配器工作原理")
+![二级分配器工作原理](https://github.com/inie0722/CTL/blob/preview/img/%E4%BA%8C%E7%BA%A7%E5%88%86%E9%85%8D%E5%99%A8%20%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86.png?raw=true "二级分配器工作原理")
 
 __chunk_alloc__
 ```c
