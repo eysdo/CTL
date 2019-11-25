@@ -47,7 +47,7 @@ static inline CTL_list_iterator CTL_list_iterator_move(const CTL_list_iterator *
 static inline void CTL_list_new(CTL_list *handle)
 {
 	//构造 一个 头结点
-	__CTL_DuLNode *node = (__CTL_DuLNode *)allocate(sizeof(__CTL_DuLNode));
+	__CTL_DuLNode *node = (__CTL_DuLNode *)CTL_allocate(sizeof(__CTL_DuLNode));
 	handle->list = node;
 	handle->list->next = node;
 	handle->list->prior = node;
@@ -57,7 +57,7 @@ static inline void CTL_list_new(CTL_list *handle)
 static inline void CTL_list_delete(CTL_list *handle)
 {
 	CTL_vector_clear(handle);
-	deallocate(handle->list, sizeof(__CTL_DuLNode));
+	CTL_deallocate(handle->list, sizeof(__CTL_DuLNode));
 }
 
 static inline void CTL_vector_clear(CTL_list *handle)
@@ -66,7 +66,7 @@ static inline void CTL_vector_clear(CTL_list *handle)
 	for (node = handle->list->next; node != handle->list;)
 	{
 		__CTL_DuLNode *next_node = node->next;
-		deallocate(handle->list, sizeof(__CTL_DuLNode));
+		CTL_deallocate(handle->list, sizeof(__CTL_DuLNode));
 		node = next_node;
 	}
 
@@ -104,7 +104,7 @@ static inline void CTL_list_pop(CTL_list *handle, int direction)
 
 static inline void CTL_list_insert(CTL_list *handle, CTL_list_iterator iterator, type data)
 {
-	__CTL_DuLNode *new_node = (__CTL_DuLNode *)allocate(sizeof(__CTL_DuLNode));
+	__CTL_DuLNode *new_node = (__CTL_DuLNode *)CTL_allocate(sizeof(__CTL_DuLNode));
 
 	new_node->data = data;
 	new_node->next = iterator.node;
@@ -123,7 +123,7 @@ static inline void CTL_list_erase(CTL_list *handle, CTL_list_iterator iterator)
 	iterator.node->prior->next = iterator.node->next;
 	iterator.node->next->prior = iterator.node->prior;
 
-	deallocate(iterator.node, sizeof(__CTL_DuLNode));
+	CTL_deallocate(iterator.node, sizeof(__CTL_DuLNode));
 }
 
 static inline CTL_list_iterator CTL_list_at(const CTL_list *handle, size_t pos)

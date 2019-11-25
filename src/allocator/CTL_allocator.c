@@ -1,11 +1,11 @@
 #include "CTL_allocator.h"
 
 //一级分配器
-static inline void *CTL_malloc(size_t size);
-static inline void *CTL_remalloc(void *old_ptr, size_t size);
-static inline void CTL_free(void *ptr);
+static void *CTL_malloc(size_t size);
+static void *CTL_remalloc(void *old_ptr, size_t size);
+static void CTL_free(void *ptr);
 
-static inline void *CTL_malloc(size_t size)
+static void *CTL_malloc(size_t size)
 {
     void *result = malloc(size);
 
@@ -18,7 +18,7 @@ static inline void *CTL_malloc(size_t size)
     return result;
 }
 
-static inline void *CTL_remalloc(void *old_ptr, size_t size)
+static void *CTL_remalloc(void *old_ptr, size_t size)
 {
     void *result = realloc(old_ptr, size);
 
@@ -31,7 +31,7 @@ static inline void *CTL_remalloc(void *old_ptr, size_t size)
     return result;
 }
 
-static inline void CTL_free(void *ptr)
+static void CTL_free(void *ptr)
 {
     free(ptr);
 }
@@ -50,9 +50,9 @@ typedef union obj //free list 节点
     char client_data[1];       //指向内存块
 } obj;
 
-static inline void *refill(size_t size); //free list 填充函数
+static void *refill(size_t size); //free list 填充函数
 
-static inline void *chunk_alloc(size_t size, int *nobjs); //该函数 负责向内存池 索要 内存
+static void *chunk_alloc(size_t size, int *nobjs); //该函数 负责向内存池 索要 内存
 
 static obj *free_list[NFREELISTS] = {NULL};
 
@@ -60,9 +60,9 @@ static char *begin_free = 0;
 static char *end_free = 0;
 static size_t heap_size = 0;
 
-static inline void *allocate(size_t size)
+void *CTL_allocate(size_t size)
 {
-    ++debug_mem;
+    ++CTL_debug_mem;
     obj *result;
 
     if (size > MAX_BYTES)
@@ -84,7 +84,7 @@ static inline void *allocate(size_t size)
     return result;
 }
 
-static inline void *reallocate(void *old_ptr, size_t old_size, size_t new_size)
+void *CTL_reallocate(void *old_ptr, size_t old_size, size_t new_size)
 {
     //申请和释放 都大于 MAX_BYTES 交给 一级分配器处理
     if (old_size > MAX_BYTES && new_size > MAX_BYTES)
@@ -93,16 +93,16 @@ static inline void *reallocate(void *old_ptr, size_t old_size, size_t new_size)
     }
     else
     {
-        void *new_ptr = allocate(new_size);
+        void *new_ptr = CTL_allocate(new_size);
         memcpy(new_ptr, old_ptr, new_size > old_size ? new_size : old_size);
-        deallocate(old_ptr, old_size);
+        CTL_deallocate(old_ptr, old_size);
         return new_ptr;
     }
 }
 
-static inline void deallocate(void *ptr, size_t size)
+void CTL_deallocate(void *ptr, size_t size)
 {
-    --debug_mem;
+    ++CTL_debug_mem;
     //释放内存 大于 MAX_BYTES 直接 交给 一级分配器
     if (size > MAX_BYTES)
     {
@@ -117,7 +117,7 @@ static inline void deallocate(void *ptr, size_t size)
     }
 }
 
-static inline void *refill(size_t size)
+static void *refill(size_t size)
 {
     obj *result;
     //申请 20个 size 大小区块 具体过程由chunk_alloc 函数执行
@@ -155,7 +155,7 @@ static inline void *refill(size_t size)
     return result;
 }
 
-static inline void *chunk_alloc(size_t size, int *nobjs)
+static void *chunk_alloc(size_t size, int *nobjs)
 {
     void *result;
     //要分配的 内存 数量

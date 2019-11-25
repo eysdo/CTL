@@ -8,14 +8,14 @@ void CTL_vector_new(CTL_vector *handle, size_t size)
 {
     handle->size = 0;
     handle->capacity = size;
-    handle->begin = (type *)allocate(sizeof(type) * size);
+    handle->begin = (type *)CTL_allocate(sizeof(type) * size);
     handle->end = handle->begin;
 }
 
 void CTL_vector_delete(CTL_vector *handle)
 {
     CTL_vector_clear(handle);
-    deallocate(handle->begin, sizeof(type) * handle->capacity);
+    CTL_deallocate(handle->begin, sizeof(type) * handle->capacity);
 }
 
 void CTL_vector_clear(CTL_vector *handle)
@@ -29,9 +29,9 @@ void CTL_vector_push_back(CTL_vector *handle, type data)
     //空间 不足 扩充一倍
     if (handle->size == handle->capacity)
     {
-        type *ptr = (type *)allocate(2 * handle->capacity * sizeof(type));
+        type *ptr = (type *)CTL_allocate(2 * handle->capacity * sizeof(type));
         memmove(ptr, handle->begin, handle->capacity * sizeof(type));
-        deallocate(handle->begin, handle->capacity * sizeof(type));
+        CTL_deallocate(handle->begin, handle->capacity * sizeof(type));
         handle->begin = ptr;
         handle->capacity *= 2;
     }
@@ -51,12 +51,12 @@ void CTL_vector_insert(CTL_vector *handle, const CTL_vector_iterator *iterator, 
     //空间不足扩充操作
     if (handle->size == handle->capacity)
     {
-        type *ptr = (type *)allocate(2 * handle->capacity * sizeof(type));
+        type *ptr = (type *)CTL_allocate(2 * handle->capacity * sizeof(type));
         //拷贝前面的数据
         memmove(ptr, handle->begin, sizeof(type) * (iterator->data - handle->begin));
         //拷贝后面的数据 并空出一个位置
         memmove(ptr + (iterator->data - handle->begin) + 1, iterator->data, sizeof(type) * (handle->end - iterator->data));
-        deallocate(handle->begin, handle->capacity * sizeof(type));
+        CTL_deallocate(handle->begin, handle->capacity * sizeof(type));
         handle->capacity *= 2;
         //迭代器失效
         ptr[(iterator->data - handle->begin)] = data;

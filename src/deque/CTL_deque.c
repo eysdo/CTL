@@ -39,12 +39,12 @@ void CTL_deque_new(CTL_deque *handle, size_t buf_size)
     handle->buf_size = buf_size;
     //一个map至少 拥有8个节点
     handle->map_size = 8;
-    handle->map = (type **)allocate(sizeof(type *) * handle->map_size);
+    handle->map = (type **)CTL_allocate(sizeof(type *) * handle->map_size);
 
     //先分配一个缓存区
     type **start = handle->map + ((handle->map_size - 1) / 2);
     type **finish = start;
-    *start = allocate(sizeof(type) * handle->buf_size);
+    *start = CTL_allocate(sizeof(type) * handle->buf_size);
     //设置 begin和end 两个迭代器
     set_node(handle->begin, start, handle->buf_size);
     handle->begin.cur = *start;
@@ -70,12 +70,12 @@ void reallocate_map(CTL_deque *handle, size_t nodes_to_add, bool front)
     {
         //重新 分配 map空间
         size_t new_map_size = handle->map_size + (handle->map_size > nodes_to_add ? handle->map_size : nodes_to_add);
-        type **new_map = allocate(sizeof(type *) * new_map_size);
+        type **new_map = CTL_allocate(sizeof(type *) * new_map_size);
 
         new_start = new_map + (handle->map_size - num_new_nodes) / 2 + (front ? nodes_to_add : 0);
 
         memmove(new_start, handle->begin.node, sizeof(type *) * (handle->end.node - handle->begin.node + 1));
-        deallocate(handle->map, sizeof(type *) * handle->map_size);
+        CTL_deallocate(handle->map, sizeof(type *) * handle->map_size);
 
         handle->map = new_map;
         handle->map_size = new_map_size;
@@ -97,7 +97,7 @@ void push_aux(CTL_deque *handle, bool front)
             reallocate_map(handle, 1, true);
         }
         //分配一个新节点
-        *(handle->begin.node - 1) = (type *)allocate(sizeof(type) * handle->buf_size);
+        *(handle->begin.node - 1) = (type *)CTL_allocate(sizeof(type) * handle->buf_size);
         //设置begin 迭代器
         --handle->begin.node;
         set_node(handle->begin, handle->begin.node, handle->buf_size);
@@ -111,7 +111,7 @@ void push_aux(CTL_deque *handle, bool front)
             reallocate_map(handle, 1, false);
         }
         //分配一个新节点
-        *(handle->end.node + 1) = (type *)allocate(sizeof(type) * handle->buf_size);
+        *(handle->end.node + 1) = (type *)CTL_allocate(sizeof(type) * handle->buf_size);
         //设置end 迭代器
         ++handle->end.node;
         set_node(handle->end, handle->end.node, handle->buf_size);
@@ -153,14 +153,14 @@ void pop_aux(CTL_deque *handle, bool front)
 {
     if (front)
     {
-        deallocate(handle->begin.node, sizeof(type) * handle->map_size);
+        CTL_deallocate(handle->begin.node, sizeof(type) * handle->map_size);
         ++handle->begin.node;
         set_node(handle->begin, handle->begin.node, handle->buf_size);
         handle->begin.cur = handle->begin.first;
     }
     else
     {
-        deallocate(handle->end.node, sizeof(type) * handle->map_size);
+        CTL_deallocate(handle->end.node, sizeof(type) * handle->map_size);
         --handle->end.node;
         set_node(handle->end, handle->end.node, handle->buf_size);
         handle->end.cur = handle->end.last - 1;
@@ -214,7 +214,7 @@ void CTL_deque_clear(CTL_deque *handle)
         //释放缓存区
         for (type **node = handle->begin.node + 1; node <= handle->end.node; ++node)
         {
-            deallocate(*node, sizeof(type) * handle->buf_size);
+            CTL_deallocate(*node, sizeof(type) * handle->buf_size);
         }
     }
 
