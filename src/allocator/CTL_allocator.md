@@ -309,7 +309,7 @@ static void *chunk_alloc(size_t size, int *nobjs)
 
     Q2 size_t bytes_to_get = 2 * bytes_total + ROUND_UP(heap_size >> 4);
         此行代码 为何要 >>4位
-    A2 这里仅需要少了附加内存 因为内存池 直至程序结束 才被释放
+    A2 这里仅需要少量附加内存 因为内存池 直至程序结束 才被释放
 
   更多 疑问 欢迎留言 共同讨论<br>
 
