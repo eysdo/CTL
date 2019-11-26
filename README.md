@@ -15,6 +15,6 @@ STL 分为 以下 六大模块
     * 序列容器
       * [array](/src/array/CTL_array.md#array)
     * 关联容器
-  算法<br>
-  仿函数<br>
-  配接器<br>
+  * 算法
+  * 仿函数
+  * 配接器
