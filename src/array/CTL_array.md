@@ -1,8 +1,8 @@
 # array
 ## 前言
-  我个人实现array 和 STL中的array 略有不同, 它更像是一个 不支持动态扩展的vector<br>
-  其实我实现的这个array, 主要为了方便统一的操作, 比如插入多个数据的时候, 我们可以统一使用迭代器作为参数类型<br>
-  由于array实现十分简单, 我这里就不进行过多讲解了, 你可以通过阅读下面代码 了解本库风格
+我个人实现array 和 STL中的array 略有不同, 它更像是一个 不支持动态扩展的vector<br>
+其实我实现的这个array, 主要为了方便统一的操作, 比如插入多个数据的时候, 我们可以统一使用迭代器作为参数类型<br>
+由于array实现十分简单, 我这里就不进行过多讲解了, 你可以通过阅读下面代码 了解本库风格<br>
 ## 容器和迭代器定义
 ```c
 typedef int type;
@@ -40,11 +40,11 @@ ptrdiff_t CTL_array_iterator_diff(const CTL_array_iterator *left, const CTL_arra
 
 bool CTL_array_iterator_more(const CTL_array_iterator *left, const CTL_array_iterator *right);
 ```
-  在STL中array的迭代器, 就是一个普通的指针, 容器的begin指向目前使用空间开头, end目前使用空间结尾, 因为这个array是我参照vector精简实现的<br>
-  ![begin和end 示意图](/img/array%E5%AE%B9%E5%99%A8%20begin%E5%92%8Cend%20%E7%A4%BA%E6%84%8F%E5%9B%BE.png?raw=true "begin和end 示意图")
+在STL中array的迭代器, 就是一个普通的指针, 容器的begin指向目前使用空间开头, end目前使用空间结尾, 因为这个array是我参照vector精简实现的<br>
+![begin和end 示意图](/img/array%E5%AE%B9%E5%99%A8%20begin%E5%92%8Cend%20%E7%A4%BA%E6%84%8F%E5%9B%BE.png?raw=true "begin和end 示意图")
 
 ## 容器和迭代器实现
-  array实现上并没有什么难点, 所以这里就不进行讲解了
+array实现上并没有什么难点, 所以这里就不进行讲解了<br>
 ```c
 void CTL_array_new(CTL_array *handle, type *begin, type *end)
 {

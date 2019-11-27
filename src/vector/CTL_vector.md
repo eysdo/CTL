@@ -44,9 +44,9 @@ ptrdiff_t CTL_vector_iterator_diff(const CTL_vector_iterator *left, const CTL_ve
 
 bool CTL_vector_iterator_more(const CTL_vector_iterator *left, const CTL_vector_iterator *right);
 ```
-    迭代器就是一个普通的指针, 容器的begin指向目前使用空间开头, end目前使用空间结尾
-    在STL中还拥有一个end_of_storage指针 指向当前空间的结尾, 在这里被我用 capacity代替了, capacity当前空间可存放的元素数量
-    size当前存放的元素数量
+  迭代器就是一个普通的指针, 容器的begin指向目前使用空间开头, end目前使用空间结尾<br>
+  在STL中还拥有一个end_of_storage指针 指向当前空间的结尾, 在这里被我用 capacity代替了, capacity当前空间可存放的元素数量<br>
+  size当前存放的元素数量<br>
   这里放一张 vector扩充示意图<br>
   ![vector扩充示意图](/img/vector%E6%89%A9%E5%85%85%20%E7%A4%BA%E6%84%8F%E5%9B%BE.png?raw=true "vector扩充示意图")
 
@@ -93,10 +93,10 @@ void CTL_vector_push_back(CTL_vector *handle, type data)
     ++handle->size;
 }
 ```
-    push_back在尾端添加一个新的元素时, 会去先检查当前备用空间是否充足, 备用空间充足 直接在end位置赋值.
-    备用空间不足的时候, 先去构造一个新的空间 将原数据迁移至新的空间, 并释放掉原空间和调整begin和end迭代器, 在新的空间尾部赋值
+  push_back在尾端添加一个新的元素时, 会去先检查当前备用空间是否充足, 备用空间充足 直接在end位置赋值.<br>
+  备用空间不足的时候, 先去构造一个新的空间 将原数据迁移至新的空间, 并释放掉原空间和调整begin和end迭代器, 在新的空间尾部赋值<br>
 <font color=Red>
-  注意这里的动态扩展并不是在原空间尾部增加空间, 因为无法保证原空间尾部还拥有可用内存, vector迭代器是一个普通指针, 所以当空间发生扩展的时候, 先前的所有迭代器会失效变成野指针
+  注意这里的动态扩展并不是在原空间尾部增加空间, 因为无法保证原空间尾部还拥有可用内存, vector迭代器是一个普通指针, 所以当空间发生扩展的时候, 先前的所有迭代器会失效变成野指针<br>
 </font>
 
 __pop_back实现__
@@ -136,14 +136,14 @@ void CTL_vector_insert(CTL_vector *handle, const CTL_vector_iterator *iterator, 
     ++handle->size;
 }
 ```
-    insert也会检查备用空间, 备用空间充足 直接调用memmove移动数据, 然后在插入点赋值就行
-    当备用空间不足的时候会分配新的空间, 将原空间数据拷贝到新空间里, 这里拷贝工作被分为两个步骤
-    步骤1 拷贝插入点前的数据
-    步骤2 空出一个位置 并拷贝插入点后面的数据, 对于插入多个数据的操作 这里就会空出多个位置
-    拷贝工作完成后 进行相应的赋值操作
+insert也会检查备用空间, 备用空间充足 直接调用memmove移动数据, 然后在插入点赋值就行<br>
+当备用空间不足的时候会分配新的空间, 将原空间数据拷贝到新空间里, 这里拷贝工作被分为两个步骤<br>
+步骤1 拷贝插入点前的数据<br>
+步骤2 空出一个位置 并拷贝插入点后面的数据, 对于插入多个数据的操作 这里就会空出多个位置<br>
+拷贝工作完成后 进行相应的赋值操作<br>
 
 __其他操作实现__
-这些操作过于简单 就不再讲述了
+这些操作过于简单 就不再讲述了<br>
 ```c
 void CTL_vector_erase(CTL_vector *handle, const CTL_vector_iterator *iterator)
 {
@@ -192,9 +192,9 @@ bool CTL_vector_iterator_more(const CTL_vector_iterator *left, const CTL_vector_
 ```
 __总结__
 
-    vector容器对于随机访问速度非常快, 但是插入和删除就显得不行了, 因此使用vector的时候尽量减少插入和删除操作, 如果需要频繁插入 删除最好使用list容器.
-    在进行插入操作的时候一旦发生扩展空间, 先前的全部迭代器都会失效, 变成野指针, 即便没有发生扩展操作, 迭代器所指对象可能也会发生变化
+vector容器对于随机访问速度非常快, 但是插入和删除就显得不行了, 因此使用vector的时候尽量减少插入和删除操作, 如果需要频繁插入 删除最好使用list容器.<br>
+在进行插入操作的时候一旦发生扩展空间, 先前的全部迭代器都会失效, 变成野指针, 即便没有发生扩展操作, 迭代器所指对象可能也会发生变化<br>
 
-参考文献
+参考文献<br>
 ---
 [STL源码剖析](https://item.jd.com/11821611.html)<br>
