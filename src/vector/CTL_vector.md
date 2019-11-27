@@ -48,7 +48,7 @@ bool CTL_vector_iterator_more(const CTL_vector_iterator *left, const CTL_vector_
     在STL中还拥有一个end_of_storage指针 指向当前空间的结尾, 在这里被我用 capacity代替了, capacity当前空间可存放的元素数量
     size当前存放的元素数量
   这里放一张 vector扩充示意图<br>
-  ![vector扩充示意图](/img/array%E5%AE%B9%E5%99%A8%20begin%E5%92%8Cend%20%E7%A4%BA%E6%84%8F%E5%9B%BE.png?raw=true "vector扩充示意图")
+  ![vector扩充示意图](/img/vector%E6%89%A9%E5%85%85%20%E7%A4%BA%E6%84%8F%E5%9B%BE.png?raw=true "vector扩充示意图")
 
 ## 容器和迭代器实现
 
