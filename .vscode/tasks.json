@@ -2,11 +2,27 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "gcc-8 build active file",
-            "command": "/usr/bin/gcc-8",
+            "label": "gcc",
+            "command": "/usr/bin/gcc",
             "args": [
                 "-g",
                 "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}"
+            ],
+            "options": {
+                "cwd": "/usr/bin"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "gtest",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-g",
+                "${file}",
+                "-lgtest",
+                "-lpthread",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}"
             ],

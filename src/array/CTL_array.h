@@ -5,8 +5,6 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "../public/CTL_public.h"
-
 typedef int type;
 
 typedef struct
@@ -18,6 +16,7 @@ typedef struct
 {
     CTL_array_iterator begin;
     CTL_array_iterator end;
+    size_t size;
 } CTL_array;
 
 void CTL_array_new(CTL_array *handle, type *begin, type *end);

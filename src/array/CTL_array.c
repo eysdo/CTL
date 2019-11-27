@@ -8,6 +8,7 @@ void CTL_array_new(CTL_array *handle, type *begin, type *end)
 {
     handle->begin.data = begin;
     handle->end.data = end;
+    handle->size = end - begin;
 }
 
 void CTL_array_clear(CTL_array *handle)
@@ -18,11 +19,13 @@ void CTL_array_clear(CTL_array *handle)
 void CTL_array_push_back(CTL_array *handle, type data)
 {
     *handle->end.data++ = data;
+    ++handle->size;
 }
 
 void CTL_array_pop_back(CTL_array *handle)
 {
     --handle->end.data;
+    --handle->size;
 }
 
 void CTL_array_insert(CTL_array *handle, const CTL_array_iterator *iterator, type data)
@@ -30,12 +33,14 @@ void CTL_array_insert(CTL_array *handle, const CTL_array_iterator *iterator, typ
     memmove(iterator->data + 1, iterator->data, sizeof(type) * (handle->end.data - iterator->data));
     *iterator->data = data;
     ++handle->end.data;
+    ++handle->size;
 }
 
 void CTL_array_erase(CTL_array *handle, const CTL_array_iterator *iterator)
 {
     memmove(iterator->data, iterator->data + 1, sizeof(type) * (handle->end.data - iterator->data - 1));
     --handle->end.data;
+    --handle->size;
 }
 
 CTL_array_iterator CTL_array_at(const CTL_array *handle, size_t pos)

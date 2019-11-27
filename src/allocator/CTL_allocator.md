@@ -160,7 +160,7 @@ static void *refill(size_t size)
     obj *next_obj = *my_free_list = (obj *)(chunk + size);
 
     //挂载区块操作
-    for (size_t i = 0;; ++i)
+    for (size_t i = 1;; ++i)
     {
         //循环从1开始，因为第一区块已经返回给用户了
         obj *current_obj = next_obj;

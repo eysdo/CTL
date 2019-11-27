@@ -4,7 +4,6 @@
 #include <malloc.h>
 #include <string.h>
 
-#include "../public/CTL_public.h"
 #include "../allocator/CTL_allocator.h"
 
 typedef int type;
