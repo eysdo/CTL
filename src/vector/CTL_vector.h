@@ -11,16 +11,16 @@ typedef int type;
 
 typedef struct
 {
-    type *begin;
-    type *end;
-    size_t size;
-    size_t capacity;
-} CTL_vector;
+    type *data;
+} CTL_vector_iterator;
 
 typedef struct
 {
-    type *data;
-} CTL_vector_iterator;
+    CTL_vector_iterator begin;
+    CTL_vector_iterator end;
+    size_t size;
+    size_t capacity;
+} CTL_vector;
 
 void CTL_vector_new(CTL_vector *handle, size_t size);
 

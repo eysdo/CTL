@@ -40,7 +40,7 @@ ptrdiff_t CTL_array_iterator_diff(const CTL_array_iterator *left, const CTL_arra
 
 bool CTL_array_iterator_more(const CTL_array_iterator *left, const CTL_array_iterator *right);
 ```
-  在STL中array的迭代器, 就是一个普通的指针, begin指向数组起始地址 , end指向数组第一个待用区块, 因为这个array是我参照vector精简实现的
+  在STL中array的迭代器, 就是一个普通的指针, 容器的begin指向目前使用空间开头, end目前使用空间结尾, 因为这个array是我参照vector精简实现的
   ![begin和end 示意图](/img/array%E5%AE%B9%E5%99%A8%20begin%E5%92%8Cend%20%E7%A4%BA%E6%84%8F%E5%9B%BE.png?raw=true "begin和end 示意图")
 
 ## 容器和迭代器实现

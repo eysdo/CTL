@@ -129,7 +129,7 @@ void *CTL_allocate(size_t size)
     //如果 没用可以内存块 就重新填充 free list
     if (!result)
     {
-        result = refill(ROUND_UP(size));
+        result = (obj*)refill(ROUND_UP(size));
         return result;
     }
     *my_free_list = result->free_list_link;
@@ -146,7 +146,7 @@ static void *refill(size_t size)
     obj *result;
     //申请 20个 size 大小区块 具体过程由chunk_alloc 函数执行
     int nobjs = 20;
-    char *chunk = chunk_alloc(size, &nobjs);
+    char *chunk = (char*)chunk_alloc(size, &nobjs);
 
     //如果只获得了一个区块 就将这个区块直接返回给用户 此时free_list中无新节点
     if (nobjs == 1)
@@ -293,7 +293,7 @@ static void *chunk_alloc(size_t size, int *nobjs)
             //如果 彻底 没有空间了 这时候 交给一级分配器 处理
             //看看 OOM机制 是否有效
             //end_free = 0;
-            begin_free = CTL_malloc(bytes_to_get);
+            begin_free = (char*)CTL_malloc(bytes_to_get);
         }
         heap_size += bytes_to_get;
         end_free = begin_free + bytes_to_get;
