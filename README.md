@@ -13,7 +13,7 @@ STL 分为 以下 六大模块
   * [迭代器](/src/iterator/CTL_iterator.md#迭代器)
   * 容器
     * 序列容器
-      * [array](/src/array/CTL_array.md#array)
+      * [array(非标准实现)](/src/array/CTL_array.md#array)
     * 关联容器
   * 算法
   * 仿函数
