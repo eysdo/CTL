@@ -34,7 +34,7 @@ void CTL_list_new(CTL_list *handle);
 
 void CTL_list_delete(CTL_list *handle);
 
-void CTL_vector_clear(CTL_list *handle);
+void CTL_list_clear(CTL_list *handle);
 
 void CTL_list_push(CTL_list *handle, type data, int direction);
 
