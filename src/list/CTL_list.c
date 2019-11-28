@@ -41,43 +41,23 @@ void CTL_vector_clear(CTL_list *handle)
 void CTL_list_push_back(CTL_list *handle, type data)
 {
 	CTL_list_insert(handle, &handle->end, data);
-	handle->begin.node = handle->list->next;
-	handle->begin.data = &handle->list->next->data;
-
-	handle->end.node = handle->list;
-	handle->end.data = &handle->list->data;
 }
 
 void CTL_list_push_front(CTL_list *handle, type data)
 {
 	CTL_list_insert(handle, &handle->begin, data);
-	handle->begin.node = handle->list->next;
-	handle->begin.data = &handle->list->next->data;
-
-	handle->end.node = handle->list;
-	handle->end.data = &handle->list->data;
 }
 
 void CTL_list_pop_back(CTL_list *handle)
 {
 	assert(handle->size);
 	CTL_list_erase(handle, &handle->end);
-	handle->begin.node = handle->list->next;
-	handle->begin.data = &handle->list->next->data;
-
-	handle->end.node = handle->list;
-	handle->end.data = &handle->list->data;
 }
 
 void CTL_list_pop_front(CTL_list *handle)
 {
 	assert(handle->size);
 	CTL_list_erase(handle, &handle->begin);
-	handle->begin.node = handle->list->next;
-	handle->begin.data = &handle->list->next->data;
-
-	handle->end.node = handle->list;
-	handle->end.data = &handle->list->data;
 }
 
 void CTL_list_insert(CTL_list *handle, const CTL_list_iterator *iterator, type data)
@@ -91,6 +71,16 @@ void CTL_list_insert(CTL_list *handle, const CTL_list_iterator *iterator, type d
 	new_node->prior->next = new_node;
 	iterator->node->prior = new_node;
 
+	if(handle->begin.node != handle->list->next)
+	{
+		handle->begin.node = handle->list->next;
+		handle->begin.data = &handle->list->next->data;
+	}
+	if(handle->end.node != handle->list)
+	{
+		handle->end.node = handle->list;
+		handle->end.data = &handle->list->data;
+	}
 	++handle->size;
 }
 
@@ -100,6 +90,17 @@ void CTL_list_erase(CTL_list *handle, const CTL_list_iterator *iterator)
 	iterator->node->next->prior = iterator->node->prior;
 
 	CTL_deallocate(iterator->node, sizeof(__CTL_DuLNode));
+	
+	if(handle->begin.node != handle->list->next)
+	{
+		handle->begin.node = handle->list->next;
+		handle->begin.data = &handle->list->next->data;
+	}
+	if(handle->end.node != handle->list)
+	{
+		handle->end.node = handle->list;
+		handle->end.data = &handle->list->data;
+	}
 	--handle->size;
 }
 
